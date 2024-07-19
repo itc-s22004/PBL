@@ -1,0 +1,23 @@
+/* styles/Calendar.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.full-calendar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 画面全体の高さに合わせる */
+}
+
+.full-calendar {
+  flex: 1; /* カレンダーを可能な限り大きく表示 */
+}
+
+.input-area {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f9fafb;
+}
+
