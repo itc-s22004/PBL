@@ -1,39 +1,57 @@
-"use client"; 
+// app/components/LoginForm.js
+"use client";
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getDocs, collection, query, where } from 'firebase/firestore';
+import { db } from '../database/firebase';
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (username === '' || password === '') {
-      setError('Please enter both username and password');
+
+    if (email === '' || password === '') {
+      setError('Please enter both email and password');
       return;
     }
 
-    // ログイン処理（ここではダミー処理）
-    console.log('Logging in with:', { username, password });
-    // ログイン成功の場合はリダイレクトやステータス更新などを行います
+    try {
+      // Firestoreからユーザー情報を取得
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email), where('password', '==', password));
+      const querySnapshot = await getDocs(q);
 
-    // エラーメッセージをリセット
-    setError('');
+      if (!querySnapshot.empty) {
+        // ユーザーが存在する場合、カレンダー画面に遷移
+        setError('');
+        navigate('/calendar');
+      } else {
+        // ユーザーが存在しない場合
+        setError('Invalid email or password');
+      }
+    } catch (error) {
+      console.error('Error checking user credentials:', error);
+      setError('Failed to log in: ' + error.message);
+    }
   };
 
   return (
     <div className="login-form">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleLogin}>
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="email">Email:</label>
           <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
