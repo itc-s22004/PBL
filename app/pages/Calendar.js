@@ -10,13 +10,23 @@ import jaLocale from '@fullcalendar/core/locales/ja';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
-  const [events, setEvents] = useState([]);
+  const [holidayDates, setHolidayDates] = useState(new Set());
+  const [dayBeforeHolidayDates, setDayBeforeHolidayDates] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
       const json = await fetchHolidays();
       if (json) {
         const parsedHolidays = parseHolidays(json);
+        const holidayDatesSet = new Set(parsedHolidays.map(holiday => holiday.date));
+        setHolidayDates(holidayDatesSet);
+        
+        const dayBeforeHolidayDatesSet = new Set(parsedHolidays.map(holiday => {
+          const holidayDate = new Date(holiday.date);
+          holidayDate.setDate(holidayDate.getDate() - 1);
+          return holidayDate.toISOString().split('T')[0];
+        }));
+        setDayBeforeHolidayDates(dayBeforeHolidayDatesSet);
       }
     };
 
@@ -41,7 +51,6 @@ export default function Home() {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek'
             }}
-            events={events}
             locale={jaLocale}
             dayHeaderContent={(args) => {
               const dayOfWeek = args.date.getDay();
@@ -56,6 +65,15 @@ export default function Home() {
                   {args.text}
                 </span>
               );
+            }}
+            dayCellClassNames={(args) => {
+              const dateStr = args.date.toISOString().split('T')[0];
+              const isDayBeforeHoliday = dayBeforeHolidayDates.has(dateStr);
+              let className = '';
+              if (isDayBeforeHoliday) {
+                className = 'holiday-day';
+              }
+              return className;
             }}
             height="100%"
           />
@@ -72,3 +90,4 @@ export default function Home() {
     </>
   );
 }
+
