@@ -1,14 +1,37 @@
-// pages/Calendar.js
 "use client"
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { useState } from 'react'
-import '../styles/Calendar.css' // CSSファイルをインポート
+import React, { useEffect, useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import { fetchHolidays, parseHolidays } from '../Api/holiday';
+import '../styles/Calendar.css';
+import jaLocale from '@fullcalendar/core/locales/ja'; 
 
-export default function Calendar() {
+export default function Home() {
   const [inputValue, setInputValue] = useState('');
+  const [holidayDates, setHolidayDates] = useState(new Set());
+  const [dayBeforeHolidayDates, setDayBeforeHolidayDates] = useState(new Set());
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const json = await fetchHolidays();
+      if (json) {
+        const parsedHolidays = parseHolidays(json);
+        const holidayDatesSet = new Set(parsedHolidays.map(holiday => holiday.date));
+        setHolidayDates(holidayDatesSet);
+        
+        const dayBeforeHolidayDatesSet = new Set(parsedHolidays.map(holiday => {
+          const holidayDate = new Date(holiday.date);
+          holidayDate.setDate(holidayDate.getDate() - 1);
+          return holidayDate.toISOString().split('T')[0];
+        }));
+        setDayBeforeHolidayDates(dayBeforeHolidayDatesSet);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -24,11 +47,35 @@ export default function Calendar() {
               timeGridPlugin
             ]}
             headerToolbar={{
-              left: 'prev, next today',
+              left: 'prev,next today',
               center: 'title',
-              right: 'resourceTimelineWeek, dayGridMonth, timeGridWeek'
+              right: 'dayGridMonth,timeGridWeek'
             }}
-            height="100%" // カレンダーの高さを全画面に設定
+            locale={jaLocale}
+            dayHeaderContent={(args) => {
+              const dayOfWeek = args.date.getDay();
+              let className = '';
+              if (dayOfWeek === 0) {
+                className = 'sunday-day';
+              } else if (dayOfWeek === 6) {
+                className = 'saturday-day';
+              }
+              return (
+                <span className={className}>
+                  {args.text}
+                </span>
+              );
+            }}
+            dayCellClassNames={(args) => {
+              const dateStr = args.date.toISOString().split('T')[0];
+              const isDayBeforeHoliday = dayBeforeHolidayDates.has(dateStr);
+              let className = '';
+              if (isDayBeforeHoliday) {
+                className = 'holiday-day';
+              }
+              return className;
+            }}
+            height="100%"
           />
         </div>
         <div className="input-area">
