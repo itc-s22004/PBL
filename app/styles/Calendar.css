@@ -1,0 +1,35 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.full-calendar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+}
+
+.full-calendar {
+  flex: 1; 
+}
+
+.input-area {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f9fafb;
+}
+
+.saturday-day {
+  color: blue !important;
+}
+
+.sunday-day {
+  color: red !important; 
+}
+
+.holiday-day {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: none;
+}
+
