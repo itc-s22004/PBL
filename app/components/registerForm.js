@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { db } from '../database/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import s from '../styles/signUp.module.css';
 
 const RegisterForm = () => {
@@ -10,6 +11,7 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +39,10 @@ const RegisterForm = () => {
     setUsername('');
     setEmail('');
     setPassword('');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
   };
 
   return (
