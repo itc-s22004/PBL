@@ -1,4 +1,3 @@
-// app/components/LoginForm.js
 "use client";
 
 import React, { useState } from 'react';
@@ -40,8 +39,12 @@ const LoginForm = () => {
     }
   };
 
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
   return (
-    <div className="login-form">
+    <div>
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
@@ -66,6 +69,7 @@ const LoginForm = () => {
           />
         </div>
         <button type="submit">Login</button>
+        <button type="button" onClick={handleRegister}>Registerへ</button>
       </form>
     </div>
   );

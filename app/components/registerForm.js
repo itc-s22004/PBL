@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { db } from '../database/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +12,7 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,6 +39,10 @@ const RegisterForm = () => {
     setUsername('');
     setEmail('');
     setPassword('');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
   };
 
   return (
@@ -75,6 +82,7 @@ const RegisterForm = () => {
           />
         </div>
         <button type="submit">Register</button>
+        <button type="button" onClick={handleLogin}>Loginへ</button>
       </form>
     </div>
   );
