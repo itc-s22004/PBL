@@ -1,0 +1,80 @@
+/* LoginForm.module.css */
+
+/* 全体のレイアウト */
+.login-form {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* タイトル */
+.login-form h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  text-align: center;
+  color: #333;
+  font-weight: 600;
+}
+
+/* エラーメッセージ */
+.login-form p {
+  margin-bottom: 15px;
+  color: #e74c3c;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* フォームセクション */
+.login-form form div {
+  margin-bottom: 20px;
+}
+
+/* ラベル */
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* 入力フィールド */
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  outline: none;
+}
+
+/* ボタン */
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form button:hover {
+  background-color: #2980b9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
