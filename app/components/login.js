@@ -1,4 +1,3 @@
-// app/components/LoginForm.js
 "use client";
 
 import React, { useState } from 'react';
@@ -22,17 +21,14 @@ const LoginForm = () => {
     }
 
     try {
-      // Firestoreからユーザー情報を取得
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('email', '==', email), where('password', '==', password));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        // ユーザーが存在する場合、カレンダー画面に遷移
         setError('');
         navigate('/calendar');
       } else {
-        // ユーザーが存在しない場合
         setError('Invalid email or password');
       }
     } catch (error) {
