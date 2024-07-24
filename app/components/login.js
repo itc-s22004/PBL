@@ -39,11 +39,11 @@ const LoginForm = () => {
 
   return (
     <div className="login-form">
-      <h2>Login</h2>
+      <h2>ログイン</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">メールアドレス:</label>
           <input
             type="email"
             id="email"
@@ -53,7 +53,7 @@ const LoginForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">パスワード:</label>
           <input
             type="password"
             id="password"
@@ -62,9 +62,7 @@ const LoginForm = () => {
             required
           />
         </div>
-        <button type="submit">Login</button>
-        
-
+        <button type="submit">ログイン</button>
       </form>
     </div>
   );
