@@ -1,8 +1,8 @@
-"use client"; 
-
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { db } from '../database/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import s from '../styles/signUp.module.css';
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
@@ -20,6 +20,7 @@ const RegisterForm = () => {
     }
 
     try {
+      console.log('Adding document to Firestore');
       const docRef = await addDoc(collection(db, 'users'), {
         username: username,
         email: email,
@@ -39,45 +40,50 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="register-form">
-      <h2>Register</h2>
+    <div className={s.all}>
+      <Image src="/pig.png" width={100} height={100} className={s.image} alt="logo"/>
+      <h2 className={s.signUp}>新規登録</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username:</label>
+      <form onSubmit={handleSubmit} className={s.container}>
+        <div className={s.field}>
+          <label htmlFor="username" className={s.label}>UserName</label>
           <input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className={s.input}
           />
         </div>
-        <div>
-          <label htmlFor="email">Email:</label>
+        <div className={s.field}>
+          <label htmlFor="email" className={s.label}>UserEmail</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className={s.input}
           />
         </div>
-        <div>
-          <label htmlFor="password">Password:</label>
+        <div className={s.field}>
+          <label htmlFor="password" className={s.label}>PassWord</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className={s.input}
           />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" className={s.button}>Register</button>
       </form>
     </div>
   );
 };
 
 export default RegisterForm;
+
