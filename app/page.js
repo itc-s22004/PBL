@@ -9,13 +9,13 @@ import Register from "./components/registerForm.js"
 
 const Page = () => {
   return (
-    //<Router>
-      //<Routes>
-        //<Route path="/" element={<Login />} />
-        //<Route path="/calendar" element={<Calendar />} />
-      //</Routes>
-    //</Router>
-    <Register />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/calendar" element={<Calendar />} />
+      </Routes>
+    </Router>
+    // <Register />
   );
 };
 
