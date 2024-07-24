@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
+import '../styles/LoginForm.css';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
