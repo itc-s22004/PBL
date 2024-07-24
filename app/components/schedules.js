@@ -7,6 +7,7 @@ const Schedules = () => {
   const date = queryParams.get('date');
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [refreshTime, setRefreshTime] = useState("");
   const colors = ["red", "blue", "yellow"];
 
   return (
@@ -39,7 +40,7 @@ const Schedules = () => {
         <input 
           type="time" 
           value={refreshTime}
-          onChange={event => setEndTime(event.target.value)}
+          onChange={event => setRefreshTime(event.target.value)}
         />
       </div>
     </div>
