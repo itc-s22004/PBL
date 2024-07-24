@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
 import '../styles/LoginForm.css';
@@ -37,7 +37,12 @@ const LoginForm = () => {
     }
   };
 
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
   return (
+    <>
     <div className="login-form">
       <h2>ログイン</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -63,8 +68,11 @@ const LoginForm = () => {
           />
         </div>
         <button type="submit">ログイン</button>
+        {/* <button type="button" onClick={handleRegister}>新規登録へ</button> */}
+        {/* <Link to="/register">新規登録へ</Link> */}
       </form>
     </div>
+    </>
   );
 };
 
