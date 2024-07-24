@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
+import '../styles/LoginForm.css';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -20,17 +21,14 @@ const LoginForm = () => {
     }
 
     try {
-      // Firestoreからユーザー情報を取得
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('email', '==', email), where('password', '==', password));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        // ユーザーが存在する場合、カレンダー画面に遷移
         setError('');
         navigate('/calendar');
       } else {
-        // ユーザーが存在しない場合
         setError('Invalid email or password');
       }
     } catch (error) {
@@ -39,12 +37,8 @@ const LoginForm = () => {
     }
   };
 
-  const handleRegister = () => {
-    navigate('/register');
-  };
-
   return (
-    <div>
+    <div className="login-form">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
@@ -69,7 +63,7 @@ const LoginForm = () => {
           />
         </div>
         <button type="submit">Login</button>
-        <button type="button" onClick={handleRegister}>Registerへ</button>
+
       </form>
     </div>
   );
