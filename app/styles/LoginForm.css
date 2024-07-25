@@ -12,6 +12,7 @@
   margin-top: 100px;
   display: flex;
   flex-direction: column;
+  animation: slideInRight 0.7s ease-in-out; /* フェードインアニメーションを追加 */
 }
 
 /* タイトル */
@@ -78,4 +79,16 @@
 .login-form button:hover {
   background-color: #2980b9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 右から左にフェードインするアニメーション */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
