@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { db } from '../database/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import s from '../styles/signUp.module.css';
 
-const RegisterForm = () => {
+const RegisterForm = () => {  
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -86,6 +86,8 @@ const RegisterForm = () => {
           />
         </div>
         <button type="submit" className={s.button}>Register</button>
+        {/* <button type="button" onClick={handleLogin }>ログインへ</button> */}
+        {/* <Link to="/login">ログインへ</Link> */}
       </form>
     </div>
   );

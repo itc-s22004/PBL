@@ -21,7 +21,6 @@ const Page = () => {
         </Routes>
       </Router>
 	  </>
-    //<Register />
   );
 };
 
