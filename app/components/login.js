@@ -48,8 +48,7 @@ const LoginForm = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
         <div>
-          <label htmlFor="email">メールアドレス:</label>
-          <input
+        <label htmlFor="email">メールアドレス:</label>
             type="email"
             id="email"
             value={email}
