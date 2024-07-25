@@ -1,0 +1,72 @@
+.all {
+  background-color: #FFF8ED;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  top: 5vh;
+  left: 55px;
+  margin:auto 0;
+  position: absolute;
+}
+
+.signUp {
+  font-weight: 400;
+  color: black;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.field {
+	margin-bottom: 1.5rem;
+}
+
+.label {
+  font-weight: 150;
+  color: black;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 7px 3px 9px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button {
+  font-size: 16px;
+  color: #FA6EA9;
+  background: #FFF;
+  border-radius: 8px;
+  border: 1px solid #FA6EA9;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: center;
+}
+
+.button:hover {
+  background-color: #FA6EA9;
+  color: white;
+}
+
