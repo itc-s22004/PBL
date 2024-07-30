@@ -87,7 +87,6 @@ const RegisterForm = () => {
         </div>
         <button type="submit" className={s.button}>Register</button>
         {/* <button type="button" onClick={handleLogin }>ログインへ</button> */}
-        {/* <Link to="/login">ログインへ</Link> */}
       </form>
     </div>
   );
