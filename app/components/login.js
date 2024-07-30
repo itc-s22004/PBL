@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth, signInWithEmailAndPassword } from '../database/firebase'; // 正しいパスでインポート
+import { auth, signInWithEmailAndPassword } from '../database/firebase'; 
 import { useNavigate, Link } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
@@ -23,7 +23,6 @@ const LoginForm = () => {
   };
 
   return (
-    <>
     <div className="login-form">
       <h2>ログイン</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -52,7 +51,6 @@ const LoginForm = () => {
         <Link to="/register">新規登録へ</Link>
       </form>
     </div>
-    </>
   );
  
 };
