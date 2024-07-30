@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import { db } from '../database/firebase';
-import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../database/firebase';
 
 const Schedules = () => {
   const location = useLocation();
@@ -13,35 +14,21 @@ const Schedules = () => {
   const [endTime, setEndTime] = useState("");
   const [partTime, setPartTime] = useState("");
   const [hourlyWage, setHourlyWage] = useState("");
-  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const partTimeOptions = ["Job A", "Job B", "Job C"];
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        try {
-          const usersRef = collection(db, 'users');
-          const q = query(usersRef, where('email', '==', user.email));
-          const querySnapshot = await getDocs(q);
-
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUsername(userData.username || ""); 
-          } else {
-            console.log('No user data found for the given email.');
-          }
-        } catch (err) {
-          console.error('Error fetching user data: ', err);
-          setError('Error fetching user data');
-        }
+        setUserName(user.displayName || user.email || 'ユーザー');
       } else {
-        console.log('No user is logged in.');
+        setUserName('ログインしていません');
       }
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -53,7 +40,7 @@ const Schedules = () => {
         partTime: partTime,
         startTime: Timestamp.fromDate(new Date(`${date}T${startTime}`)),
         endTime: Timestamp.fromDate(new Date(`${date}T${endTime}`)),
-        username: username,
+        username: userName,
         hourlyWage: Number(hourlyWage)
       });
 
@@ -62,17 +49,23 @@ const Schedules = () => {
       setStartTime("");
       setEndTime("");
       setHourlyWage("");
+      setError(""); 
+      setSuccessMessage("追加ができました。");
     } catch (e) {
-      console.error('Error adding document: ', e);
+      console.error('Error adding document');
       setError('Failed to register schedule');
+      setSuccessMessage(""); 
     }
   };
 
   return (
     <div>
       <h2>Schedules for {date}</h2>
-      <p>Logged in as: {username}</p>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* エラーメッセージを表示 */}
+      <div className="user-info">
+          <p>こんにちは、{userName}さん</p>
+      </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>} 
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>Part Time: </label>

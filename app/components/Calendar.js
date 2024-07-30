@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -9,11 +7,16 @@ import { fetchHolidays, parseHolidays } from '../Api/holiday';
 import '../styles/Calendar.css';
 import jaLocale from '@fullcalendar/core/locales/ja';
 import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../database/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function Calendar() {
   const [inputValue, setInputValue] = useState('');
   const [holidayDates, setHolidayDates] = useState(new Set());
   const [dayBeforeHolidayDates, setDayBeforeHolidayDates] = useState(new Set());
+  const [userName, setUserName] = useState('');
+  const [events, setEvents] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +26,7 @@ export default function Calendar() {
         const parsedHolidays = parseHolidays(json);
         const holidayDatesSet = new Set(parsedHolidays.map(holiday => holiday.date));
         setHolidayDates(holidayDatesSet);
-        
+
         const dayBeforeHolidayDatesSet = new Set(parsedHolidays.map(holiday => {
           const holidayDate = new Date(holiday.date);
           holidayDate.setDate(holidayDate.getDate() - 1);
@@ -36,6 +39,44 @@ export default function Calendar() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserName(user.displayName || user.email || 'ユーザー');
+      } else {
+        setUserName('ログインしていません');
+      }
+    });
+
+    return () => unsubscribe(); 
+  }, []);
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      const querySnapshot = await getDocs(collection(db, 'schedules'));
+      const fetchedEvents = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        if (data.username === userName) {
+          const startTime = data.startTime.toDate();
+          const endTime = data.endTime.toDate();
+          const formattedStartTime = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+          const formattedEndTime = `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`;
+          return {
+            title: `${data.username} ${data.partTime}`,
+            start: startTime,
+            end: endTime,
+          };
+        }
+        return null;
+      }).filter(event => event !== null);
+      setEvents(fetchedEvents);
+    };
+
+    if (userName) {
+      fetchSchedules();
+    }
+  }, [userName]);
+
   const handleDateClick = (info) => {
     navigate(`/schedules?date=${info.dateStr}`);
   };
@@ -44,6 +85,9 @@ export default function Calendar() {
     <>
       <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
         <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
+        <div className="user-info">
+          <p>こんにちは、{userName}さん</p>
+        </div>
       </nav>
       <main className="full-calendar-container">
         <div className="full-calendar">
@@ -82,9 +126,7 @@ export default function Calendar() {
               }
               return className;
             }}
-            events={[
-              {title:'event', start:'2024-07-23'}
-            ]}
+            events={events}
             height="100%"
             dateClick={handleDateClick}
           />
