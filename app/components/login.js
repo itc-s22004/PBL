@@ -49,6 +49,7 @@ const LoginForm = () => {
       <form onSubmit={handleLogin}>
         <div>
         <label htmlFor="email">メールアドレス:</label>
+        <input
             type="email"
             id="email"
             value={email}
