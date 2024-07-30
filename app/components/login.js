@@ -1,5 +1,6 @@
+"use client";
+
 import React, { useState } from 'react';
-import { auth, signInWithEmailAndPassword } from '../database/firebase'; 
 import { useNavigate, Link } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
@@ -13,12 +14,26 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (email === '' || password === '') {
+      setError('Please enter both email and password');
+      return;
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('ログイン成功！');
-      navigate('/calendar'); 
-    } catch (err) {
-      setError('ログインに失敗しました');
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email), where('password', '==', password));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setError('');
+        navigate('/calendar');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (error) {
+      console.error('Error checking user credentials:', error);
+      setError('Failed to log in: ' + error.message);
     }
   };
 
@@ -48,11 +63,10 @@ const LoginForm = () => {
           />
         </div>
         <button type="submit">ログイン</button>
-        <Link to="/register">新規登録へ</Link>
       </form>
+      <Link to="/register" className="register-link">新規登録へ→</Link>
     </div>
   );
- 
 };
 
 export default LoginForm;
