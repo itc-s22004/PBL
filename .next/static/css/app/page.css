@@ -1,0 +1,213 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/Calendar.css ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************/
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.full-calendar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+}
+
+.full-calendar {
+  flex: 1; 
+}
+
+.input-area {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f9fafb;
+}
+
+.saturday-day {
+  color: blue !important;
+}
+
+.sunday-day {
+  color: red !important; 
+}
+
+.holiday-day {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: none;
+}
+
+
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/LoginForm.css ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/* LoginForm.module.css */
+
+/* 全体のレイアウト */
+.login-form {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.7s ease-in-out; /* フェードインアニメーションを追加 */
+}
+
+/* タイトル */
+.login-form h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  text-align: center;
+  color: #333;
+  font-weight: 600;
+}
+
+/* エラーメッセージ */
+.login-form p {
+  margin-bottom: 15px;
+  color: #e74c3c;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* フォームセクション */
+.login-form form div {
+  margin-bottom: 20px;
+  margin-right: 26px;
+}
+
+/* ラベル */
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* 入力フィールド */
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  outline: none;
+}
+
+/* ボタン */
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form button:hover {
+  background-color: #2980b9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 右から左にフェードインするアニメーション */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/*!************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./app/styles/signUp.module.css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************/
+.signUp_all__BYKr1 {
+  background-color: #FFF8ED;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.signUp_image__J89PH {
+  top: 5vh;
+  left: 55px;
+  margin:auto 0;
+  position: absolute;
+}
+
+.signUp_signUp__s4pb8 {
+  font-weight: 400;
+  color: black;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.signUp_container___oDl1 {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.signUp_field__VAVK5 {
+	margin-bottom: 1.5rem;
+}
+
+.signUp_label__Gk8V0 {
+  font-weight: 150;
+  color: black;
+  margin-bottom: 0.5rem;
+}
+
+.signUp_input___vU0f {
+  width: 100%;
+  padding: 7px 3px 9px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.signUp_button__PmVww {
+  font-size: 16px;
+  color: #FA6EA9;
+  background: #FFF;
+  border-radius: 8px;
+  border: 1px solid #FA6EA9;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: center;
+}
+
+.signUp_button__PmVww:hover {
+  background-color: #FA6EA9;
+  color: white;
+}
+
+
