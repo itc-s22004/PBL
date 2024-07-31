@@ -20,9 +20,11 @@ const Schedules = () => {
   const [endTime, setEndTime] = useState("");
   const [partTime, setPartTime] = useState("");
   const [hourlyWage, setHourlyWage] = useState("");
-  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
+  const [userName, setUserName] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const auth = getAuth(); // Add this line to initialize auth
 
   const partTimeOptions = ["Job A", "Job B", "Job C"];
   const wageMapping = {
@@ -32,31 +34,16 @@ const Schedules = () => {
   };
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        try {
-          const usersRef = collection(db, 'users');
-          const q = query(usersRef, where('email', '==', user.email));
-          const querySnapshot = await getDocs(q);
-
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUsername(userData.username || user.email || 'ユーザー'); 
-          } else {
-            console.log('No user data found for the given email.');
-          }
-        } catch (err) {
-          console.error('Error fetching user data: ', err);
-          setError('Error fetching user data');
-        }
+        setUserName(user.displayName || user.email || 'ユーザー');
       } else {
-        setUsername('ログインしていません');
+        setUserName('ログインしていません');
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   const handlePartTimeChange = (event) => {
     const selectedPartTime = event.target.value;
@@ -73,7 +60,7 @@ const Schedules = () => {
         partTime: partTime,
         startTime: Timestamp.fromDate(new Date(`${date}T${startTime}`)),
         endTime: Timestamp.fromDate(new Date(`${date}T${endTime}`)),
-        username: username,
+        username: userName,
         hourlyWage: Number(hourlyWage)
       });
 
@@ -82,21 +69,21 @@ const Schedules = () => {
       setStartTime("");
       setEndTime("");
       setHourlyWage("");
-      setError("");
-      setSuccessMessage("予定が正常に登録されました。");
+      setError(""); 
+      setSuccessMessage("追加ができました。");
     } catch (e) {
-      console.error('Error adding document: ', e);
-      setError('予定の登録に失敗しました。');
-      setSuccessMessage("");
+      console.error('Error adding document');
+      setError('Failed to register schedule');
+      setSuccessMessage(""); 
     }
   };
 
   return (
     <div className="container">
       <h2>日付: {formattedDate}</h2>
-      <p>ユーザー名: {username}</p>
-      {error && <p className="error">{error}</p>} {/* エラーメッセージを表示 */}
-      {successMessage && <p className="success">{successMessage}</p>} {/* 成功メッセージを表示 */}
+      <p>ユーザー名: {userName}</p>
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>出勤場所: </label>
