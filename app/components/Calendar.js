@@ -132,12 +132,12 @@ export default function Calendar() {
 
   return (
     <>
-      <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
+      {/* <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
         <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
         <div className="user-info">
           <p>こんにちは、{userName}さん</p>
         </div>
-      </nav>
+      </nav> */}
       <main className="full-calendar-container">
         <div className="full-calendar">
           <FullCalendar 
@@ -171,7 +171,7 @@ export default function Calendar() {
                   {args.text}
                 </span>
               );
-            }}
+            }}  
             dayCellClassNames={(args) => {
               const dateStr = args.date.toISOString().split('T')[0];
               const isDayBeforeHoliday = dayBeforeHolidayDates.has(dateStr);
