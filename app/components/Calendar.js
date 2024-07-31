@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../database/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
+import SlideInPanel from '../components/slideInPanel';
 
 export default function Calendar() {
   const [inputValue, setInputValue] = useState('');
@@ -17,6 +18,8 @@ export default function Calendar() {
   const [dayBeforeHolidayDates, setDayBeforeHolidayDates] = useState(new Set());
   const [userName, setUserName] = useState('');
   const [events, setEvents] = useState([]);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,7 +51,7 @@ export default function Calendar() {
       }
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -79,6 +82,17 @@ export default function Calendar() {
 
   const handleDateClick = (info) => {
     navigate(`/schedules?date=${info.dateStr}`);
+  };
+
+  const handleEventClick = (info) => {
+    const selectedDate = info.event.start.toISOString().split('T')[0];
+    const eventsOnSelectedDate = events.filter(event => event.start.toISOString().split('T')[0] === selectedDate);
+    setSelectedEvents(eventsOnSelectedDate);
+    setIsPanelVisible(true);
+  };
+
+  const handleClosePanel = () => {
+    setIsPanelVisible(false);
   };
 
   return (
@@ -129,6 +143,7 @@ export default function Calendar() {
             events={events}
             height="100%"
             dateClick={handleDateClick}
+            eventClick={handleEventClick} 
           />
         </div>
         <div className="input-area">
@@ -140,6 +155,7 @@ export default function Calendar() {
           />
         </div>
       </main>
+      <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} />
     </>
   );
 }
