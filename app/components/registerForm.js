@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { db } from '../database/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import s from '../styles/signUp.module.css';
 
-const RegisterForm = () => {  
+const RegisterForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,19 +22,24 @@ const RegisterForm = () => {
       return;
     }
 
+    const auth = getAuth();
     try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
       console.log('Adding document to Firestore');
-      const docRef = await addDoc(collection(db, 'users'), {
+      await addDoc(collection(db, 'users'), {
+        uid: user.uid,
         username: username,
         email: email,
         password: password,
       });
-      setSuccess('User registered successfully!');
+      setSuccess('登録が完了しました！');
       setError('');
-      console.log('Document written with ID: ', docRef.id);
+      console.log('User registered with ID: ', user.uid);
     } catch (e) {
       console.error('Error adding document: ', e);
-      setError('Error adding document');
+      setError('登録が失敗しました！');
     }
 
     setUsername('');
@@ -86,8 +92,7 @@ const RegisterForm = () => {
           />
         </div>
         <button type="submit" className={s.button}>Register</button>
-        {/* <button type="button" onClick={handleLogin }>ログインへ</button> */}
-        {/* <Link to="/login">ログインへ</Link> */}
+        <Link to="/login" className={s.loginLink}>ログインへ→</Link>
       </form>
     </div>
   );
