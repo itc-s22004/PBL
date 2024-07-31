@@ -18,6 +18,8 @@ export default function Calendar() {
   const [dayBeforeHolidayDates, setDayBeforeHolidayDates] = useState(new Set());
   const [userName, setUserName] = useState('');
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [totalHourlyWage, setTotalHourlyWage] = useState(0);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const navigate = useNavigate();
@@ -62,23 +64,35 @@ export default function Calendar() {
         if (data.username === userName) {
           const startTime = data.startTime.toDate();
           const endTime = data.endTime.toDate();
-          const formattedStartTime = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
-          const formattedEndTime = `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`;
           return {
             title: `${data.username} ${data.partTime}`,
             start: startTime,
             end: endTime,
+            partTime: data.partTime,
+            hourlyWage: data.hourlyWage
           };
         }
         return null;
       }).filter(event => event !== null);
       setEvents(fetchedEvents);
+      setFilteredEvents(fetchedEvents);
     };
 
     if (userName) {
       fetchSchedules();
     }
   }, [userName]);
+
+  useEffect(() => {
+    const calculateTotalHourlyWage = () => {
+      const totalWage = filteredEvents.reduce((total, event) => {
+        return total + (event.hourlyWage || 0);
+      }, 0);
+      setTotalHourlyWage(totalWage);
+    };
+
+    calculateTotalHourlyWage();
+  }, [filteredEvents]);
 
   const handleDateClick = (info) => {
     navigate(`/schedules?date=${info.dateStr}`);
@@ -147,12 +161,7 @@ export default function Calendar() {
           />
         </div>
         <div className="input-area">
-          <textarea
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="ここに文字を入力してください..."
-            className="w-full h-32 p-2 border rounded"
-          />
+          <p className="total-hourly-wage">現在の給料: {totalHourlyWage}円</p>
         </div>
       </main>
       <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} />
@@ -160,9 +169,8 @@ export default function Calendar() {
   );
 }
 
-
-
-/*import React, { useState, useEffect } from 'react';
+/*
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
