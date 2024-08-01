@@ -9,7 +9,7 @@ import jaLocale from '@fullcalendar/core/locales/ja';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../database/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 import SlideInPanel from '../components/slideInPanel';
 
 export default function Calendar() {
@@ -23,8 +23,10 @@ export default function Calendar() {
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [partTime, setPartTime] = useState("");  
-  const partTimeOptions = ["", "Job A", "Job B", "Job C"];
+  const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
+  const [partTime, setPartTime] = useState("");
+  const [newJobName, setNewJobName] = useState("");
+  const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +47,17 @@ export default function Calendar() {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchPartTimeOptions = async () => {
+      const q = query(collection(db, 'partTimes'));
+      const querySnapshot = await getDocs(q);
+      const options = querySnapshot.docs.map(doc => doc.data().name);
+      setPartTimeOptions(["", ...options]); // 初期値として空文字を追加
+    };
+
+    fetchPartTimeOptions();
   }, []);
 
   useEffect(() => {
@@ -89,7 +102,10 @@ export default function Calendar() {
   useEffect(() => {
     const calculateTotalHourlyWage = () => {
       const totalWage = filteredEvents.reduce((total, event) => {
-        return total + (event.hourlyWage || 0);
+        const start = new Date(event.start);
+        const end = new Date(event.end);
+        const hoursWorked = (end - start) / (1000 * 60 * 60);
+        return total + (event.hourlyWage * hoursWorked || 0);
       }, 0);
       setTotalHourlyWage(totalWage);
     };
@@ -116,6 +132,10 @@ export default function Calendar() {
     setIsModalOpen(true);
   };
 
+  const handleAddButtonClick = () => {
+    setIsAddJobModalOpen(true);
+  };
+
   const handleModalClose = () => {
     setIsModalOpen(false);
     if (partTime) {
@@ -128,6 +148,40 @@ export default function Calendar() {
 
   const handlePartTimeChange = (event) => {
     setPartTime(event.target.value); 
+  };
+
+  const handleNewJobNameChange = (event) => {
+    setNewJobName(event.target.value);
+  };
+
+  const handleAddJob = async () => {
+    if (newJobName) {
+      try {
+        await addDoc(collection(db, 'partTimes'), { name: newJobName });
+        setPartTimeOptions(prevOptions => {
+          if (!prevOptions.includes(newJobName)) {
+            return [...prevOptions, newJobName];
+          }
+          return prevOptions;
+        });
+        setNewJobName("");
+        setIsAddJobModalOpen(false);
+      } catch (error) {
+        console.error("Error adding job: ", error);
+      }
+    }
+  };
+
+  const handleDatesSet = (dateInfo) => {
+    const startOfMonth = new Date(dateInfo.view.currentStart.getFullYear(), dateInfo.view.currentStart.getMonth(), 1);
+    const endOfMonth = new Date(dateInfo.view.currentStart.getFullYear(), dateInfo.view.currentStart.getMonth() + 1, 0);
+
+    const filtered = events.filter(event => {
+      const eventDate = new Date(event.start);
+      return (eventDate >= startOfMonth && eventDate <= endOfMonth);
+    });
+
+    setFilteredEvents(filtered);
   };
 
   return (
@@ -147,14 +201,18 @@ export default function Calendar() {
               timeGridPlugin
             ]}
             headerToolbar={{
-              left: 'prev,next today myCustomButton',
+              left: 'prev,next today myCustomButton myAddButton',
               center: 'title',
               right: 'dayGridMonth,timeGridWeek'
             }}
             customButtons={{
               myCustomButton: {
-                text: 'バイト',
+                text: '表示',
                 click: handleCustomButtonClick
+              },
+              myAddButton: {
+                text: '追加',
+                click: handleAddButtonClick
               }
             }}
             locale={jaLocale}
@@ -184,7 +242,8 @@ export default function Calendar() {
             events={filteredEvents}
             height="100%"
             dateClick={handleDateClick}
-            eventClick={handleEventClick} 
+            eventClick={handleEventClick}
+            datesSet={handleDatesSet}
           />
         </div>
         <div className="input-area">
@@ -196,7 +255,7 @@ export default function Calendar() {
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={handleModalClose}>&times;</span>
-            <h2>Select Part Time</h2>
+            <h2>表示するバイトを選んだください</h2>
             <select
               value={partTime}
               onChange={handlePartTimeChange}
@@ -211,7 +270,23 @@ export default function Calendar() {
           </div>
         </div>
       )}
+      {isAddJobModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={() => setIsAddJobModalOpen(false)}>&times;</span>
+            <h2>新しいバイトの名前を入力してください</h2>
+            <input 
+              type="text" 
+              value={newJobName} 
+              onChange={handleNewJobNameChange}
+              placeholder="バイト名"
+            />
+            <button onClick={handleAddJob}>追加</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
 

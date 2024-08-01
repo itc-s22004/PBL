@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+
+import { useLocation } from 'react-router-dom'; 
 import { db } from '../database/firebase';
-import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import '../styles/Schedules.css'; // Import the CSS
+import { collection, addDoc, Timestamp, getDocs, query } from 'firebase/firestore'; // query を追加
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../database/firebase';
+
 
 const Schedules = () => {
   const location = useLocation();
@@ -23,15 +25,8 @@ const Schedules = () => {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [partTimeOptions, setPartTimeOptions] = useState([]);
 
-  const auth = getAuth(); // Add this line to initialize auth
-
-  const partTimeOptions = ["Job A", "Job B", "Job C"];
-  const wageMapping = {
-    "Job A": 1000,
-    "Job B": 1200,
-    "Job C": 1500
-  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -50,6 +45,17 @@ const Schedules = () => {
     setPartTime(selectedPartTime);
     setHourlyWage(wageMapping[selectedPartTime]);
   };
+
+  useEffect(() => {
+    const fetchPartTimeOptions = async () => {
+      const q = query(collection(db, 'partTimes'));
+      const querySnapshot = await getDocs(q);
+      const options = querySnapshot.docs.map(doc => doc.data().name);
+      setPartTimeOptions(options);
+    };
+
+    fetchPartTimeOptions();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
