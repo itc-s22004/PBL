@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from "react";
+
 import { useLocation } from 'react-router-dom'; 
 import { db } from '../database/firebase';
 import { collection, addDoc, Timestamp, getDocs, query } from 'firebase/firestore'; // query を追加
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../database/firebase';
 
+
 const Schedules = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const date = queryParams.get('date');
+
+  const formattedDate = new Date(date).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
   
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [partTime, setPartTime] = useState("");
   const [hourlyWage, setHourlyWage] = useState("");
   const [error, setError] = useState("");
+  const [userName, setUserName] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([]);
-  const [userName, setUserName] = useState('');
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -29,7 +38,13 @@ const Schedules = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
+
+  const handlePartTimeChange = (event) => {
+    const selectedPartTime = event.target.value;
+    setPartTime(selectedPartTime);
+    setHourlyWage(wageMapping[selectedPartTime]);
+  };
 
   useEffect(() => {
     const fetchPartTimeOptions = async () => {
@@ -70,29 +85,27 @@ const Schedules = () => {
   };
 
   return (
-    <div>
-      <h2>Schedules for {date}</h2>
-      <div className="user-info">
-          <p>こんにちは、{userName}さん</p>
-      </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>} 
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+    <div className="container">
+      <h2>日付: {formattedDate}</h2>
+      <p>ユーザー名: {userName}</p>
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Part Time: </label>
+          <label>出勤場所: </label>
           <select
             value={partTime}
-            onChange={event => setPartTime(event.target.value)}
+            onChange={handlePartTimeChange}
             required
           >
-            <option value="" disabled>Select Part Time</option>
+            <option value="" disabled>選択してください</option>
             {partTimeOptions.map((option) => (
               <option key={option} value={option}>{option}</option>
             ))}
           </select>
         </div>
         <div>
-          <label>Start Time: </label>
+          <label>開始時間: </label>
           <input 
             type="time" 
             value={startTime}
@@ -101,7 +114,7 @@ const Schedules = () => {
           />
         </div>
         <div>
-          <label>End Time: </label>
+          <label>終了時間: </label>
           <input 
             type="time" 
             value={endTime}
@@ -110,15 +123,16 @@ const Schedules = () => {
           />
         </div>
         <div>
-          <label>Hourly Wage: </label>
+          <label>時給: </label>
           <input 
             type="number" 
             value={hourlyWage}
             onChange={event => setHourlyWage(event.target.value)}
             required
+            readOnly
           />
         </div>
-        <button type="submit">Register Schedule</button>
+        <button type="submit">予定を登録する</button>
       </form>
     </div>
   );
