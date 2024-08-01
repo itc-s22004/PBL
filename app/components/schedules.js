@@ -1,7 +1,7 @@
-import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom'; 
 import { db } from '../database/firebase';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp, getDocs, query } from 'firebase/firestore'; // query を追加
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../database/firebase';
 
@@ -16,7 +16,7 @@ const Schedules = () => {
   const [hourlyWage, setHourlyWage] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const partTimeOptions = ["Job A", "Job B", "Job C"];
+  const [partTimeOptions, setPartTimeOptions] = useState([]);
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -29,6 +29,17 @@ const Schedules = () => {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchPartTimeOptions = async () => {
+      const q = query(collection(db, 'partTimes'));
+      const querySnapshot = await getDocs(q);
+      const options = querySnapshot.docs.map(doc => doc.data().name);
+      setPartTimeOptions(options);
+    };
+
+    fetchPartTimeOptions();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -114,4 +125,3 @@ const Schedules = () => {
 };
 
 export default Schedules;
-
