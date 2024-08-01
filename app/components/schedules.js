@@ -43,7 +43,7 @@ const Schedules = () => {
   const handlePartTimeChange = (event) => {
     const selectedPartTime = event.target.value;
     setPartTime(selectedPartTime);
-    setHourlyWage(wageMapping[selectedPartTime]);
+    // setHourlyWage(wageMapping[selectedPartTime]);
   };
 
   useEffect(() => {
