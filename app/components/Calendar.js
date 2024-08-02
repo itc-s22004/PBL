@@ -26,6 +26,9 @@ export default function Calendar() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [partTime, setPartTime] = useState("");
   const [newJobName, setNewJobName] = useState("");
+  const [newJobStartTime, setNewJobStartTime] = useState("");
+  const [newJobEndTime, setNewJobEndTime] = useState("");
+  const [newJobHourlyWage, setNewJobHourlyWage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
 
@@ -54,7 +57,7 @@ export default function Calendar() {
       const q = query(collection(db, 'partTimes'));
       const querySnapshot = await getDocs(q);
       const options = querySnapshot.docs.map(doc => doc.data().name);
-      setPartTimeOptions(["", ...options]); // 初期値として空文字を追加
+      setPartTimeOptions(["", ...options]);
     };
 
     fetchPartTimeOptions();
@@ -154,10 +157,25 @@ export default function Calendar() {
     setNewJobName(event.target.value);
   };
 
+  const handleNewJobStartTimeChange = (event) => {
+    setNewJobStartTime(event.target.value);
+  };
+
+  const handleNewJobEndTimeChange = (event) => {
+    setNewJobEndTime(event.target.value);
+  };
+
+  const handleNewJobHourlyWageChange = (event) => {
+    setNewJobHourlyWage(event.target.value);
+  };
+
   const handleAddJob = async () => {
-    if (newJobName) {
+    if (newJobName && newJobHourlyWage) {
       try {
-        await addDoc(collection(db, 'partTimes'), { name: newJobName });
+        await addDoc(collection(db, 'partTimes'), { 
+          name: newJobName,
+          hourlyWage: Number(newJobHourlyWage)
+        });
         setPartTimeOptions(prevOptions => {
           if (!prevOptions.includes(newJobName)) {
             return [...prevOptions, newJobName];
@@ -165,6 +183,9 @@ export default function Calendar() {
           return prevOptions;
         });
         setNewJobName("");
+        setNewJobStartTime("");
+        setNewJobEndTime("");
+        setNewJobHourlyWage("");
         setIsAddJobModalOpen(false);
       } catch (error) {
         console.error("Error adding job: ", error);
@@ -186,12 +207,6 @@ export default function Calendar() {
 
   return (
     <>
-      {/* <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
-        <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
-        <div className="user-info">
-          <p>こんにちは、{userName}さん</p>
-        </div>
-      </nav> */}
       <main className="full-calendar-container">
         <div className="full-calendar">
           <FullCalendar 
@@ -274,12 +289,18 @@ export default function Calendar() {
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={() => setIsAddJobModalOpen(false)}>&times;</span>
-            <h2>新しいバイトの名前を入力してください</h2>
+            <h2>新しいバイトの情報を入力してください</h2>
             <input 
               type="text" 
               value={newJobName} 
               onChange={handleNewJobNameChange}
               placeholder="バイト名"
+            />
+            <input 
+              type="number" 
+              value={newJobHourlyWage} 
+              onChange={handleNewJobHourlyWageChange}
+              placeholder="時給"
             />
             <button onClick={handleAddJob}>追加</button>
           </div>
