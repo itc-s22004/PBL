@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -31,6 +31,7 @@ export default function Calendar() {
   const [newJobHourlyWage, setNewJobHourlyWage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
+  const isScrolling = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +85,7 @@ export default function Calendar() {
           const startTime = data.startTime.toDate();
           const endTime = data.endTime.toDate();
           return {
-            title: `${data.username} ${data.partTime}`,
+            title: `${data.partTime}`,
             start: startTime,
             end: endTime,
             partTime: data.partTime,
@@ -108,23 +109,27 @@ export default function Calendar() {
         const start = new Date(event.start);
         const end = new Date(event.end);
         const hoursWorked = (end - start) / (1000 * 60 * 60);
-        return total + (event.hourlyWage * hoursWorked || 0);
+        return total + (event.hourlyWage * hoursWorked || 0) ;
       }, 0);
-      setTotalHourlyWage(totalWage);
+      setTotalHourlyWage(Math.floor(totalWage));
     };
 
     calculateTotalHourlyWage();
   }, [filteredEvents]);
 
   const handleDateClick = (info) => {
-    navigate(`/schedules?date=${info.dateStr}`);
+    if (!isScrolling.current) {
+      navigate(`/schedules?date=${info.dateStr}`);
+    }
   };
 
   const handleEventClick = (info) => {
-    const selectedDate = info.event.start.toISOString().split('T')[0];
-    const eventsOnSelectedDate = events.filter(event => event.start.toISOString().split('T')[0] === selectedDate);
-    setSelectedEvents(eventsOnSelectedDate);
-    setIsPanelVisible(true);
+    if (!isScrolling.current) {
+      const selectedDate = info.event.start.toISOString().split('T')[0];
+      const eventsOnSelectedDate = events.filter(event => event.start.toISOString().split('T')[0] === selectedDate);
+      setSelectedEvents(eventsOnSelectedDate);
+      setIsPanelVisible(true);
+    }
   };
 
   const handleClosePanel = () => {
@@ -203,6 +208,16 @@ export default function Calendar() {
     });
 
     setFilteredEvents(filtered);
+  };
+
+  const handleScrollStart = () => {
+    isScrolling.current = true;
+  };
+
+  const handleScrollEnd = () => {
+    setTimeout(() => {
+      isScrolling.current = false;
+    }, 100); // スクロールが停止した後に少し遅れてフラグをリセット
   };
 
   return (
@@ -309,5 +324,3 @@ export default function Calendar() {
     </>
   );
 }
-
-

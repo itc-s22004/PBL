@@ -14,8 +14,8 @@ const SlideInPanel = ({ isVisible, onClose, events }) => {
           events.map((event, index) => (
             <div key={index}>
               <h3>{event.title}</h3>
-              <p>Start: {event.start.toLocaleString()}</p>
-              <p>End: {event.end.toLocaleString()}</p>
+              <p>開始時刻: {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              <p>終了時刻: {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
             </div>
           ))
         ) : (
