@@ -16,6 +16,7 @@ const SlideInPanel = ({ isVisible, onClose, events }) => {
               <h3>{event.title}</h3>
               <p>開始時刻: {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
               <p>終了時刻: {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+	      <button>編集</button>
             </div>
           ))
         ) : (
