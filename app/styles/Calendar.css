@@ -75,3 +75,17 @@ html, body {
   text-decoration: none;
   cursor: pointer;
 }
+
+.fc .fc-daygrid-day-frame {
+  overflow-y: auto;
+  max-height: 100px; 
+  position: relative;
+}
+
+.fc .fc-daygrid-event {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 20px;
+}
+
