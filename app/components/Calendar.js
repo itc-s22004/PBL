@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -26,8 +26,12 @@ export default function Calendar() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [partTime, setPartTime] = useState("");
   const [newJobName, setNewJobName] = useState("");
+  const [newJobStartTime, setNewJobStartTime] = useState("");
+  const [newJobEndTime, setNewJobEndTime] = useState("");
+  const [newJobHourlyWage, setNewJobHourlyWage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
+  const isScrolling = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +58,7 @@ export default function Calendar() {
       const q = query(collection(db, 'partTimes'));
       const querySnapshot = await getDocs(q);
       const options = querySnapshot.docs.map(doc => doc.data().name);
-      setPartTimeOptions(["", ...options]); // 初期値として空文字を追加
+      setPartTimeOptions(["", ...options]);
     };
 
     fetchPartTimeOptions();
@@ -81,7 +85,7 @@ export default function Calendar() {
           const startTime = data.startTime.toDate();
           const endTime = data.endTime.toDate();
           return {
-            title: `${data.username} ${data.partTime}`,
+            title: `${data.partTime}`,
             start: startTime,
             end: endTime,
             partTime: data.partTime,
@@ -105,23 +109,27 @@ export default function Calendar() {
         const start = new Date(event.start);
         const end = new Date(event.end);
         const hoursWorked = (end - start) / (1000 * 60 * 60);
-        return total + (event.hourlyWage * hoursWorked || 0);
+        return total + (event.hourlyWage * hoursWorked || 0) ;
       }, 0);
-      setTotalHourlyWage(totalWage);
+      setTotalHourlyWage(Math.floor(totalWage));
     };
 
     calculateTotalHourlyWage();
   }, [filteredEvents]);
 
   const handleDateClick = (info) => {
-    navigate(`/schedules?date=${info.dateStr}`);
+    if (!isScrolling.current) {
+      navigate(`/schedules?date=${info.dateStr}`);
+    }
   };
 
   const handleEventClick = (info) => {
-    const selectedDate = info.event.start.toISOString().split('T')[0];
-    const eventsOnSelectedDate = events.filter(event => event.start.toISOString().split('T')[0] === selectedDate);
-    setSelectedEvents(eventsOnSelectedDate);
-    setIsPanelVisible(true);
+    if (!isScrolling.current) {
+      const selectedDate = info.event.start.toISOString().split('T')[0];
+      const eventsOnSelectedDate = events.filter(event => event.start.toISOString().split('T')[0] === selectedDate);
+      setSelectedEvents(eventsOnSelectedDate);
+      setIsPanelVisible(true);
+    }
   };
 
   const handleClosePanel = () => {
@@ -154,10 +162,25 @@ export default function Calendar() {
     setNewJobName(event.target.value);
   };
 
+  const handleNewJobStartTimeChange = (event) => {
+    setNewJobStartTime(event.target.value);
+  };
+
+  const handleNewJobEndTimeChange = (event) => {
+    setNewJobEndTime(event.target.value);
+  };
+
+  const handleNewJobHourlyWageChange = (event) => {
+    setNewJobHourlyWage(event.target.value);
+  };
+
   const handleAddJob = async () => {
-    if (newJobName) {
+    if (newJobName && newJobHourlyWage) {
       try {
-        await addDoc(collection(db, 'partTimes'), { name: newJobName });
+        await addDoc(collection(db, 'partTimes'), { 
+          name: newJobName,
+          hourlyWage: Number(newJobHourlyWage)
+        });
         setPartTimeOptions(prevOptions => {
           if (!prevOptions.includes(newJobName)) {
             return [...prevOptions, newJobName];
@@ -165,6 +188,9 @@ export default function Calendar() {
           return prevOptions;
         });
         setNewJobName("");
+        setNewJobStartTime("");
+        setNewJobEndTime("");
+        setNewJobHourlyWage("");
         setIsAddJobModalOpen(false);
       } catch (error) {
         console.error("Error adding job: ", error);
@@ -184,14 +210,18 @@ export default function Calendar() {
     setFilteredEvents(filtered);
   };
 
+  const handleScrollStart = () => {
+    isScrolling.current = true;
+  };
+
+  const handleScrollEnd = () => {
+    setTimeout(() => {
+      isScrolling.current = false;
+    }, 100); // スクロールが停止した後に少し遅れてフラグをリセット
+  };
+
   return (
     <>
-      {/* <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
-        <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
-        <div className="user-info">
-          <p>こんにちは、{userName}さん</p>
-        </div>
-      </nav> */}
       <main className="full-calendar-container">
         <div className="full-calendar">
           <FullCalendar 
@@ -274,12 +304,18 @@ export default function Calendar() {
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={() => setIsAddJobModalOpen(false)}>&times;</span>
-            <h2>新しいバイトの名前を入力してください</h2>
+            <h2>新しいバイトの情報を入力してください</h2>
             <input 
               type="text" 
               value={newJobName} 
               onChange={handleNewJobNameChange}
               placeholder="バイト名"
+            />
+            <input 
+              type="number" 
+              value={newJobHourlyWage} 
+              onChange={handleNewJobHourlyWageChange}
+              placeholder="時給"
             />
             <button onClick={handleAddJob}>追加</button>
           </div>
@@ -288,5 +324,3 @@ export default function Calendar() {
     </>
   );
 }
-
-
