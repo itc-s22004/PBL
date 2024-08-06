@@ -5,6 +5,7 @@ import { db } from '../database/firebase';
 import { collection, addDoc, Timestamp, getDocs, query } from 'firebase/firestore'; // query を追加
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../database/firebase';
+import '../styles/Schedules.css'
 
 
 const Schedules = () => {
