@@ -6,22 +6,19 @@
   align-items: center;
   justify-content: center;
 }
-
 .image {
   top: 5vh;
   left: 55px;
   margin:auto 0;
   position: absolute;
 }
-
-.signUp {
+.signIn {
   font-weight: 400;
   color: black;
   font-size: 2rem;
   text-align: center;
   margin-bottom: 5rem;
 }
-
 .container {
   background: white;
   padding: 2rem;
@@ -33,11 +30,9 @@
   flex-direction: column;
   align-items: stretch;
 }
-
 .field {
   margin-bottom: 1.5rem;
 }
-
 .label {
   font-weight: 150;
   color: black;
@@ -52,24 +47,18 @@
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
-.login-link {
+.signup {
   width: 17%;
   font-size: 16px;
-  color: #FA6EA6;
+  color: #FA6EA9;
   background: #FFF;
   border-radius: 8px;
-  border: 1px solid;
-  margin-top: 10px;
-  text-align: right;
-  color: blue;
-  text-decoration: underline;
+  border: 1px solid #FA6EA9;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
 }
-
-.login-link:hover {
-  color: darkblue;
-}
-
 .button {
   font-size: 16px;
   color: #FA6EA9;
@@ -86,5 +75,3 @@
   background-color: #FA6EA9;
   color: white;
 }
-
-
