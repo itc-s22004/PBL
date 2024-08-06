@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth, signInWithEmailAndPassword } from '../database/firebase'; // 正しいパスでインポート
+import { auth, signInWithEmailAndPassword } from '../database/firebase'; 
 import { useNavigate, Link } from 'react-router-dom';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../database/firebase';
@@ -52,10 +52,8 @@ const LoginForm = () => {
             required
           />
         </div>
-        <button type="submit" className={s.button}>ログイン</button>
-        {/* <button type="button" onClick={handleRegister}>新規登録へ</button> */}
-        {/* <Link to="/register">新規登録へ</Link> */}
-        <Link to="/register" className={s.signup}>新規登録へ</Link>
+        <button type="submit">ログイン</button>
+        <Link to="/register">新規登録へ</Link>
       </form>
     </div>
     </>

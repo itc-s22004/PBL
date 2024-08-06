@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { db } from '../database/firebase';
-import { collection, addDoc, Timestamp, getDocs, query } from 'firebase/firestore'; 
+import { collection, addDoc, Timestamp, getDocs, query, where } from 'firebase/firestore'; 
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../database/firebase';
 import '../styles/Schedules.css'
@@ -39,7 +39,27 @@ const Schedules = () => {
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
+
+  useEffect(() => {
+    const fetchPartTimeOptions = async () => {
+      if (userName) {
+        const q = query(collection(db, 'partTimes'), where('username', '==', userName));
+        const querySnapshot = await getDocs(q);
+        const options = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          setPartTimesData(prevData => ({
+            ...prevData,
+            [data.name]: data
+          }));
+          return data.name;
+        });
+        setPartTimeOptions(options);
+      }
+    };
+
+    fetchPartTimeOptions();
+  }, [userName]);
 
   const handlePartTimeChange = (event) => {
     const selectedPartTime = event.target.value;
@@ -50,24 +70,6 @@ const Schedules = () => {
       setHourlyWage('');
     }
   };
-
-  useEffect(() => {
-    const fetchPartTimeOptions = async () => {
-      const q = query(collection(db, 'partTimes'));
-      const querySnapshot = await getDocs(q);
-      const options = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        setPartTimesData(prevData => ({
-          ...prevData,
-          [data.name]: data
-        }));
-        return data.name;
-      });
-      setPartTimeOptions(options);
-    };
-
-    fetchPartTimeOptions();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,7 +92,7 @@ const Schedules = () => {
       setError(""); 
       setSuccessMessage("追加ができました。");
     } catch (e) {
-      console.error('Error adding document');
+      console.error('Error adding document: ', e);
       setError('Failed to register schedule');
       setSuccessMessage(""); 
     }
@@ -155,4 +157,3 @@ const Schedules = () => {
 };
 
 export default Schedules;
-
