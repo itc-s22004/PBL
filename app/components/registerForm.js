@@ -52,6 +52,7 @@ const RegisterForm = () => {
   };
 
   return (
+    <>
     <div className={s.all}>
       <Image src="/pig.png" width={100} height={100} className={s.image} alt="logo"/>
       <h2 className={s.signUp}>新規登録</h2>
@@ -95,8 +96,8 @@ const RegisterForm = () => {
         <Link to="/login" className={s.loginLink}>ログインへ→</Link>
       </form>
     </div>
+    </>
   );
 };
 
 export default RegisterForm;
-

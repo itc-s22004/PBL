@@ -53,16 +53,29 @@ export default function Calendar() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchPartTimeOptions = async () => {
-      const q = query(collection(db, 'partTimes'));
-      const querySnapshot = await getDocs(q);
-      const options = querySnapshot.docs.map(doc => doc.data().name);
-      setPartTimeOptions(["", ...options]);
-    };
+  // useEffect(() => {
+  //   const fetchPartTimeOptions = async () => {
+  //     const q = query(collection(db, 'partTimes'));
+  //     const querySnapshot = await getDocs(q);
+  //     const options = querySnapshot.docs.map(doc => doc.data().name);
+  //     setPartTimeOptions(["", ...options]);
+  //   };
 
+  //   fetchPartTimeOptions();
+  // }, []);
+  useEffect(() => {
+  const fetchPartTimeOptions = async () => {
+    const q = query(collection(db, 'partTimes'), where('username', '==', userName));
+    const querySnapshot = await getDocs(q);
+    const options = querySnapshot.docs.map(doc => doc.data().name);
+    setPartTimeOptions(["", ...options]);
+  };
+
+  if (userName) {
     fetchPartTimeOptions();
-  }, []);
+  }
+}, [userName]);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -76,32 +89,57 @@ export default function Calendar() {
     return () => unsubscribe(); 
   }, []);
 
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      const querySnapshot = await getDocs(collection(db, 'schedules'));
-      const fetchedEvents = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        if (data.username === userName) {
-          const startTime = data.startTime.toDate();
-          const endTime = data.endTime.toDate();
-          return {
-            title: `${data.partTime}`,
-            start: startTime,
-            end: endTime,
-            partTime: data.partTime,
-            hourlyWage: data.hourlyWage
-          };
-        }
-        return null;
-      }).filter(event => event !== null);
-      setEvents(fetchedEvents);
-      setFilteredEvents(fetchedEvents);
-    };
+  // useEffect(() => {
+  //   const fetchSchedules = async () => {
+  //     const querySnapshot = await getDocs(collection(db, 'schedules'));
+  //     const fetchedEvents = querySnapshot.docs.map(doc => {
+  //       const data = doc.data();
+  //       if (data.username === userName) {
+  //         const startTime = data.startTime.toDate();
+  //         const endTime = data.endTime.toDate();
+  //         return {
+  //           title: `${data.partTime}`,
+  //           start: startTime,
+  //           end: endTime,
+  //           partTime: data.partTime,
+  //           hourlyWage: data.hourlyWage
+  //         };
+  //       }
+  //       return null;
+  //     }).filter(event => event !== null);
+  //     setEvents(fetchedEvents);
+  //     setFilteredEvents(fetchedEvents);
+  //   };
 
-    if (userName) {
-      fetchSchedules();
-    }
-  }, [userName]);
+  //   if (userName) {
+  //     fetchSchedules();
+  //   }
+  // }, [userName]);
+  useEffect(() => {
+  const fetchSchedules = async () => {
+    const q = query(collection(db, 'schedules'), where('username', '==', userName));
+    const querySnapshot = await getDocs(q);
+    const fetchedEvents = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      const startTime = data.startTime.toDate();
+      const endTime = data.endTime.toDate();
+      return {
+        title: `${data.partTime}`,
+        start: startTime,
+        end: endTime,
+        partTime: data.partTime,
+        hourlyWage: data.hourlyWage
+      };
+    });
+    setEvents(fetchedEvents);
+    setFilteredEvents(fetchedEvents);
+  };
+
+  if (userName) {
+    fetchSchedules();
+  }
+}, [userName]);
+
 
   useEffect(() => {
     const calculateTotalHourlyWage = () => {
@@ -174,29 +212,55 @@ export default function Calendar() {
     setNewJobHourlyWage(event.target.value);
   };
 
+  // const handleAddJob = async () => {
+  //   if (newJobName && newJobHourlyWage) {
+  //     try {
+  //       await addDoc(collection(db, 'partTimes'), { 
+  //         name: newJobName,
+  //         hourlyWage: Number(newJobHourlyWage)
+  //       });
+  //       setPartTimeOptions(prevOptions => {
+  //         if (!prevOptions.includes(newJobName)) {
+  //           return [...prevOptions, newJobName];
+  //         }
+  //         return prevOptions;
+  //       });
+  //       setNewJobName("");
+  //       setNewJobStartTime("");
+  //       setNewJobEndTime("");
+  //       setNewJobHourlyWage("");
+  //       setIsAddJobModalOpen(false);
+  //     } catch (error) {
+  //       console.error("Error adding job: ", error);
+  //     }
+  //   }
+  // };
+
   const handleAddJob = async () => {
-    if (newJobName && newJobHourlyWage) {
-      try {
-        await addDoc(collection(db, 'partTimes'), { 
-          name: newJobName,
-          hourlyWage: Number(newJobHourlyWage)
-        });
-        setPartTimeOptions(prevOptions => {
-          if (!prevOptions.includes(newJobName)) {
-            return [...prevOptions, newJobName];
-          }
-          return prevOptions;
-        });
-        setNewJobName("");
-        setNewJobStartTime("");
-        setNewJobEndTime("");
-        setNewJobHourlyWage("");
-        setIsAddJobModalOpen(false);
-      } catch (error) {
-        console.error("Error adding job: ", error);
-      }
+  if (newJobName && newJobHourlyWage) {
+    try {
+      await addDoc(collection(db, 'partTimes'), { 
+        name: newJobName,
+        hourlyWage: Number(newJobHourlyWage),
+        username: userName // ユーザー名も追加
+      });
+      setPartTimeOptions(prevOptions => {
+        if (!prevOptions.includes(newJobName)) {
+          return [...prevOptions, newJobName];
+        }
+        return prevOptions;
+      });
+      setNewJobName("");
+      setNewJobStartTime("");
+      setNewJobEndTime("");
+      setNewJobHourlyWage("");
+      setIsAddJobModalOpen(false);
+    } catch (error) {
+      console.error("Error adding job: ", error);
     }
-  };
+  }
+};
+
 
   const handleDatesSet = (dateInfo) => {
     const startOfMonth = new Date(dateInfo.view.currentStart.getFullYear(), dateInfo.view.currentStart.getMonth(), 1);
@@ -217,7 +281,7 @@ export default function Calendar() {
   const handleScrollEnd = () => {
     setTimeout(() => {
       isScrolling.current = false;
-    }, 100); // スクロールが停止した後に少し遅れてフラグをリセット
+    }, 100); 
   };
 
   return (
