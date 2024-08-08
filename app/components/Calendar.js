@@ -11,6 +11,9 @@ import { auth, db } from '../database/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 import SlideInPanel from '../components/slideInPanel';
+import { doc, deleteDoc } from "firebase/firestore";
+
+
 
 export default function Calendar() {
   const [inputValue, setInputValue] = useState('');
@@ -33,6 +36,8 @@ export default function Calendar() {
   const navigate = useNavigate();
   const isScrolling = useRef(false);
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       const json = await fetchHolidays();
@@ -53,16 +58,6 @@ export default function Calendar() {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchPartTimeOptions = async () => {
-  //     const q = query(collection(db, 'partTimes'));
-  //     const querySnapshot = await getDocs(q);
-  //     const options = querySnapshot.docs.map(doc => doc.data().name);
-  //     setPartTimeOptions(["", ...options]);
-  //   };
-
-  //   fetchPartTimeOptions();
-  // }, []);
   useEffect(() => {
   const fetchPartTimeOptions = async () => {
     const q = query(collection(db, 'partTimes'), where('username', '==', userName));
@@ -89,32 +84,6 @@ export default function Calendar() {
     return () => unsubscribe(); 
   }, []);
 
-  // useEffect(() => {
-  //   const fetchSchedules = async () => {
-  //     const querySnapshot = await getDocs(collection(db, 'schedules'));
-  //     const fetchedEvents = querySnapshot.docs.map(doc => {
-  //       const data = doc.data();
-  //       if (data.username === userName) {
-  //         const startTime = data.startTime.toDate();
-  //         const endTime = data.endTime.toDate();
-  //         return {
-  //           title: `${data.partTime}`,
-  //           start: startTime,
-  //           end: endTime,
-  //           partTime: data.partTime,
-  //           hourlyWage: data.hourlyWage
-  //         };
-  //       }
-  //       return null;
-  //     }).filter(event => event !== null);
-  //     setEvents(fetchedEvents);
-  //     setFilteredEvents(fetchedEvents);
-  //   };
-
-  //   if (userName) {
-  //     fetchSchedules();
-  //   }
-  // }, [userName]);
   useEffect(() => {
   const fetchSchedules = async () => {
     const q = query(collection(db, 'schedules'), where('username', '==', userName));
@@ -128,7 +97,8 @@ export default function Calendar() {
         start: startTime,
         end: endTime,
         partTime: data.partTime,
-        hourlyWage: data.hourlyWage
+        hourlyWage: data.hourlyWage,
+	docId: doc.id
       };
     });
     setEvents(fetchedEvents);
@@ -212,37 +182,13 @@ export default function Calendar() {
     setNewJobHourlyWage(event.target.value);
   };
 
-  // const handleAddJob = async () => {
-  //   if (newJobName && newJobHourlyWage) {
-  //     try {
-  //       await addDoc(collection(db, 'partTimes'), { 
-  //         name: newJobName,
-  //         hourlyWage: Number(newJobHourlyWage)
-  //       });
-  //       setPartTimeOptions(prevOptions => {
-  //         if (!prevOptions.includes(newJobName)) {
-  //           return [...prevOptions, newJobName];
-  //         }
-  //         return prevOptions;
-  //       });
-  //       setNewJobName("");
-  //       setNewJobStartTime("");
-  //       setNewJobEndTime("");
-  //       setNewJobHourlyWage("");
-  //       setIsAddJobModalOpen(false);
-  //     } catch (error) {
-  //       console.error("Error adding job: ", error);
-  //     }
-  //   }
-  // };
-
   const handleAddJob = async () => {
   if (newJobName && newJobHourlyWage) {
     try {
       await addDoc(collection(db, 'partTimes'), { 
         name: newJobName,
         hourlyWage: Number(newJobHourlyWage),
-        username: userName // ユーザー名も追加
+        username: userName
       });
       setPartTimeOptions(prevOptions => {
         if (!prevOptions.includes(newJobName)) {
@@ -282,6 +228,11 @@ export default function Calendar() {
     setTimeout(() => {
       isScrolling.current = false;
     }, 100); 
+  };
+
+  const handleEventDelete = (docId) => {
+    setEvents(events.filter(event => event.docId !== docId));
+    setFilteredEvents(filteredEvents.filter(event => event.docId !== docId));
   };
 
   return (
@@ -344,7 +295,7 @@ export default function Calendar() {
           <p className="total-hourly-wage">現在の給料: {totalHourlyWage}円</p>
         </div>
       </main>
-      <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} />
+      <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} onEventDelete={handleEventDelete} />
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
