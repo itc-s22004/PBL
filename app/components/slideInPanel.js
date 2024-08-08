@@ -60,4 +60,3 @@ const SlideInPanel = ({ isVisible, onClose, events, onEventDelete }) => {
 };
 
 export default SlideInPanel;
-
