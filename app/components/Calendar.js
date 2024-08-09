@@ -26,8 +26,6 @@ export default function Calendar() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [partTime, setPartTime] = useState("");
   const [newJobName, setNewJobName] = useState("");
-  const [newJobStartTime, setNewJobStartTime] = useState("");
-  const [newJobEndTime, setNewJobEndTime] = useState("");
   const [newJobHourlyWage, setNewJobHourlyWage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
@@ -53,16 +51,6 @@ export default function Calendar() {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchPartTimeOptions = async () => {
-  //     const q = query(collection(db, 'partTimes'));
-  //     const querySnapshot = await getDocs(q);
-  //     const options = querySnapshot.docs.map(doc => doc.data().name);
-  //     setPartTimeOptions(["", ...options]);
-  //   };
-
-  //   fetchPartTimeOptions();
-  // }, []);
   useEffect(() => {
   const fetchPartTimeOptions = async () => {
     const q = query(collection(db, 'partTimes'), where('username', '==', userName));
@@ -89,32 +77,7 @@ export default function Calendar() {
     return () => unsubscribe(); 
   }, []);
 
-  // useEffect(() => {
-  //   const fetchSchedules = async () => {
-  //     const querySnapshot = await getDocs(collection(db, 'schedules'));
-  //     const fetchedEvents = querySnapshot.docs.map(doc => {
-  //       const data = doc.data();
-  //       if (data.username === userName) {
-  //         const startTime = data.startTime.toDate();
-  //         const endTime = data.endTime.toDate();
-  //         return {
-  //           title: `${data.partTime}`,
-  //           start: startTime,
-  //           end: endTime,
-  //           partTime: data.partTime,
-  //           hourlyWage: data.hourlyWage
-  //         };
-  //       }
-  //       return null;
-  //     }).filter(event => event !== null);
-  //     setEvents(fetchedEvents);
-  //     setFilteredEvents(fetchedEvents);
-  //   };
-
-  //   if (userName) {
-  //     fetchSchedules();
-  //   }
-  // }, [userName]);
+ 
   useEffect(() => {
   const fetchSchedules = async () => {
     const q = query(collection(db, 'schedules'), where('username', '==', userName));
@@ -200,41 +163,9 @@ export default function Calendar() {
     setNewJobName(event.target.value);
   };
 
-  const handleNewJobStartTimeChange = (event) => {
-    setNewJobStartTime(event.target.value);
-  };
-
-  const handleNewJobEndTimeChange = (event) => {
-    setNewJobEndTime(event.target.value);
-  };
-
   const handleNewJobHourlyWageChange = (event) => {
     setNewJobHourlyWage(event.target.value);
   };
-
-  // const handleAddJob = async () => {
-  //   if (newJobName && newJobHourlyWage) {
-  //     try {
-  //       await addDoc(collection(db, 'partTimes'), { 
-  //         name: newJobName,
-  //         hourlyWage: Number(newJobHourlyWage)
-  //       });
-  //       setPartTimeOptions(prevOptions => {
-  //         if (!prevOptions.includes(newJobName)) {
-  //           return [...prevOptions, newJobName];
-  //         }
-  //         return prevOptions;
-  //       });
-  //       setNewJobName("");
-  //       setNewJobStartTime("");
-  //       setNewJobEndTime("");
-  //       setNewJobHourlyWage("");
-  //       setIsAddJobModalOpen(false);
-  //     } catch (error) {
-  //       console.error("Error adding job: ", error);
-  //     }
-  //   }
-  // };
 
   const handleAddJob = async () => {
   if (newJobName && newJobHourlyWage) {
@@ -242,7 +173,7 @@ export default function Calendar() {
       await addDoc(collection(db, 'partTimes'), { 
         name: newJobName,
         hourlyWage: Number(newJobHourlyWage),
-        username: userName // ユーザー名も追加
+        username: userName 
       });
       setPartTimeOptions(prevOptions => {
         if (!prevOptions.includes(newJobName)) {
@@ -274,15 +205,10 @@ export default function Calendar() {
     setFilteredEvents(filtered);
   };
 
-  const handleScrollStart = () => {
-    isScrolling.current = true;
-  };
+    const handleTotalHourlyWageClick = () => {
+       navigate('/total');
+    };
 
-  const handleScrollEnd = () => {
-    setTimeout(() => {
-      isScrolling.current = false;
-    }, 100); 
-  };
 
   return (
     <>
@@ -341,7 +267,7 @@ export default function Calendar() {
           />
         </div>
         <div className="input-area">
-          <p className="total-hourly-wage">現在の給料: {totalHourlyWage}円</p>
+          <p className="total-hourly-wage" onClick={handleTotalHourlyWageClick}>現在の給料: {totalHourlyWage}円</p>
         </div>
       </main>
       <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} />

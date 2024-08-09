@@ -1,0 +1,76 @@
+.all {
+  background-color: #FFF8ED;
+  min-height: 100vh; /* 高さを100vhに設定 */
+  padding-top: 20px; /* 上部にパディングを追加 */
+}
+
+.totalContainer {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto; /* 自動的に中央揃え。上部に20pxのマージンを追加 */
+}
+
+.totalHeader {
+  font-size: 24px;
+  color: #ff69b4;
+  margin-bottom: 20px;
+}
+
+.yearSelector {
+  margin-bottom: 20px;
+}
+
+.yearButton {
+  background-color: #ffb6c1;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.yearButton:hover {
+  background-color: #ff69b4;
+}
+
+.selectedYear {
+  background-color: #ff69b4;
+}
+
+.totalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.totalTable th, .totalTable td {
+  border: 2px solid #ff69b4;
+  padding: 10px;
+  color: #333;
+}
+
+.totalTable th {
+  background-color: #ffb6c1;
+  color: white;
+}
+
+.totalTable tr:nth-child(even) {
+  background-color: #ffe4e1;
+}
+
+.totalTable tr:hover {
+  background-color: #ffdab9;
+}
+
+.noData {
+  color: #ff69b4;
+  font-size: 18px;
+}
