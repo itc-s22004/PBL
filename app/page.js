@@ -7,6 +7,7 @@ import Calendar from "./components/Calendar.js";
 import Login from "./components/login.js"
 import Schedules from './components/schedules.js';
 import Register from "./components/registerForm.js"
+import Total from "./components/total.js"
 
 const Page = () => {
   return (
@@ -18,6 +19,7 @@ const Page = () => {
           <Route path="/schedules" element={<Schedules />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/total" element={<Total />} />
         </Routes>
       </Router>
 	  </>

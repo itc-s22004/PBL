@@ -29,8 +29,6 @@ export default function Calendar() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [partTime, setPartTime] = useState("");
   const [newJobName, setNewJobName] = useState("");
-  const [newJobStartTime, setNewJobStartTime] = useState("");
-  const [newJobEndTime, setNewJobEndTime] = useState("");
   const [newJobHourlyWage, setNewJobHourlyWage] = useState("");
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
@@ -170,14 +168,6 @@ export default function Calendar() {
     setNewJobName(event.target.value);
   };
 
-  const handleNewJobStartTimeChange = (event) => {
-    setNewJobStartTime(event.target.value);
-  };
-
-  const handleNewJobEndTimeChange = (event) => {
-    setNewJobEndTime(event.target.value);
-  };
-
   const handleNewJobHourlyWageChange = (event) => {
     setNewJobHourlyWage(event.target.value);
   };
@@ -188,7 +178,7 @@ export default function Calendar() {
       await addDoc(collection(db, 'partTimes'), { 
         name: newJobName,
         hourlyWage: Number(newJobHourlyWage),
-        username: userName
+        username: userName 
       });
       setPartTimeOptions(prevOptions => {
         if (!prevOptions.includes(newJobName)) {
@@ -220,15 +210,10 @@ export default function Calendar() {
     setFilteredEvents(filtered);
   };
 
-  const handleScrollStart = () => {
-    isScrolling.current = true;
-  };
+    const handleTotalHourlyWageClick = () => {
+       navigate('/total');
+    };
 
-  const handleScrollEnd = () => {
-    setTimeout(() => {
-      isScrolling.current = false;
-    }, 100); 
-  };
 
   const handleEventDelete = (docId) => {
     setEvents(events.filter(event => event.docId !== docId));
@@ -292,7 +277,7 @@ export default function Calendar() {
           />
         </div>
         <div className="input-area">
-          <p className="total-hourly-wage">現在の給料: {totalHourlyWage}円</p>
+          <p className="total-hourly-wage" onClick={handleTotalHourlyWageClick}>現在の給料: {totalHourlyWage}円</p>
         </div>
       </main>
       <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} onEventDelete={handleEventDelete} />
