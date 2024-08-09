@@ -11,6 +11,9 @@ import { auth, db } from '../database/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 import SlideInPanel from '../components/slideInPanel';
+import { doc, deleteDoc } from "firebase/firestore";
+
+
 
 export default function Calendar() {
   const [inputValue, setInputValue] = useState('');
@@ -30,6 +33,8 @@ export default function Calendar() {
   const [partTimeOptions, setPartTimeOptions] = useState([""]);
   const navigate = useNavigate();
   const isScrolling = useRef(false);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +82,6 @@ export default function Calendar() {
     return () => unsubscribe(); 
   }, []);
 
- 
   useEffect(() => {
   const fetchSchedules = async () => {
     const q = query(collection(db, 'schedules'), where('username', '==', userName));
@@ -91,7 +95,8 @@ export default function Calendar() {
         start: startTime,
         end: endTime,
         partTime: data.partTime,
-        hourlyWage: data.hourlyWage
+        hourlyWage: data.hourlyWage,
+	docId: doc.id
       };
     });
     setEvents(fetchedEvents);
@@ -210,6 +215,11 @@ export default function Calendar() {
     };
 
 
+  const handleEventDelete = (docId) => {
+    setEvents(events.filter(event => event.docId !== docId));
+    setFilteredEvents(filteredEvents.filter(event => event.docId !== docId));
+  };
+
   return (
     <>
       <main className="full-calendar-container">
@@ -270,7 +280,7 @@ export default function Calendar() {
           <p className="total-hourly-wage" onClick={handleTotalHourlyWageClick}>現在の給料: {totalHourlyWage}円</p>
         </div>
       </main>
-      <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} />
+      <SlideInPanel isVisible={isPanelVisible} onClose={handleClosePanel} events={selectedEvents} onEventDelete={handleEventDelete} />
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">

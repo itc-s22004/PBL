@@ -50,7 +50,8 @@ const Schedules = () => {
           const data = doc.data();
           setPartTimesData(prevData => ({
             ...prevData,
-            [data.name]: data
+          //  [data.name]: data
+	    [data.name]: { ...data, docId: doc.id }
           }));
           return data.name;
         });
