@@ -104,7 +104,7 @@ const Schedules = () => {
   };
   return (
     <div className="container">
-    <Image src="/public/left_icon.png" className="back" height={30} width={30} alt="logo" onClick={goBack} />
+    <Image src="/left_icon.png" className="back" height={30} width={30} alt="logo" onClick={goBack} />
       <h2>日付: {formattedDate}</h2>
       <p>ユーザー名: {userName}</p>
       {error && <p className="error">{error}</p>}
