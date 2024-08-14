@@ -60,7 +60,7 @@ const RegisterForm = () => {
       {success && <p style={{ color: 'green' }}>{success}</p>}
       <form onSubmit={handleSubmit} className={s.container}>
         <div className={s.field}>
-          <label htmlFor="username" className={s.label}>UserName</label>
+          <label htmlFor="username" className={s.label}>ユーザー名</label>
           <input
             type="text"
             id="username"
@@ -71,7 +71,7 @@ const RegisterForm = () => {
           />
         </div>
         <div className={s.field}>
-          <label htmlFor="email" className={s.label}>UserEmail</label>
+          <label htmlFor="email" className={s.label}>ユーザーメール</label>
           <input
             type="email"
             id="email"
@@ -82,7 +82,7 @@ const RegisterForm = () => {
           />
         </div>
         <div className={s.field}>
-          <label htmlFor="password" className={s.label}>PassWord</label>
+          <label htmlFor="password" className={s.label}>パスワード</label>
           <input
             type="password"
             id="password"

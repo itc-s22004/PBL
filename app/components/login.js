@@ -28,10 +28,10 @@ const LoginForm = () => {
     <div className={s.all}>
       <Image src="/pig.png" width={100} height={100} className={s.image} alt="logo"/>
       <h2 className={s.signIn}>ログイン</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 're:wd' }}>{error}</p>}
       <form onSubmit={handleLogin} className={s.container}>
         <div className={s.field}>
-          <label htmlFor="email" className={s.label}>メールアドレス:</label>
+          <label htmlFor="email" className={s.label}>メールアドレス</label>
           <input
             type="email"
             id="email"
@@ -42,7 +42,7 @@ const LoginForm = () => {
           />
         </div>
         <div className={s.field}>
-          <label htmlFor="password" className={s.label}>パスワード:</label>
+          <label htmlFor="password" className={s.label}>パスワード</label>
           <input
             type="password"
             id="password"
@@ -52,7 +52,7 @@ const LoginForm = () => {
             required
           />
         </div>
-        <button type="submit">ログイン</button>
+        <button className={s.button}type="submit">ログイン</button>
         <Link to="/register">新規登録へ</Link>
       </form>
     </div>
