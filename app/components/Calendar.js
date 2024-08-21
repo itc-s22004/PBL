@@ -108,7 +108,7 @@ export default function Calendar() {
   }
 }, [userName]);
 
-
+//---------------------------------------------------------------------------------------
   useEffect(() => {
     const calculateTotalHourlyWage = () => {
       const totalWage = filteredEvents.reduce((total, event) => {

@@ -107,7 +107,7 @@ const Schedules = () => {
     <div className="container">
       <Image src="/left_icon.png" className="back" height={30} width={30} alt="logo" onClick={goBack} />
       <h2>日付: {formattedDate}</h2>
-      <p>ユーザー名: {userName}</p>
+      {/* <p>ユーザー名: {userName}</p> */}
       {error && <p className="error">{error}</p>}
       {successMessage && <p className="success">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
