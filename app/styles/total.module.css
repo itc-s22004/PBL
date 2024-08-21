@@ -8,7 +8,7 @@
 
 .back {
   cursor: pointer; 
-  float: left; /* 矢印を左に寄せるために追加 */
+  float: left;
 }
 
 .totalContainer {
@@ -91,9 +91,6 @@
 .yearTotal h3 {
   margin: 10px 0;
 }
-
-/* --------------------------------------------- */
-
 
 .tablesContainer {
   display: flex;
