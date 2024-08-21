@@ -1,10 +1,4 @@
-## やること
-
-- バイト追加のポップアップに給料追加
-- schedules.jsで給料を自動で選択する・カレンダーに戻るボタン
-- 表示する値、方法
-- styles
-
+# みんなありがとう
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
